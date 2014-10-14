@@ -70,12 +70,16 @@ module.exports = function(opt, execFile_opt) {
     var jar = execFile('java', args, { maxBuffer: opt.maxBuffer*1024 }, function(error, stdout, stderr) {
       if (error || stderr) {
         this.emit('error', new gutil.PluginError(PLUGIN_NAME, error || stderr));
-        return;
+        if (error) {
+          this.emit('end');
+          return;
+        }
       }
 
       var outputFileSrc = fs.readFile(outputFilePath, function(err, data) {
         if (err) {
           this.emit('error', new gutil.PluginError(PLUGIN_NAME, err));
+          this.emit('end');
           return;
         }
 
